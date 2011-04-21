@@ -102,6 +102,32 @@ class KLTest(unittest.TestCase):
         p = np.array([0.7, 0.1, 0.2])
         self.assertEqual(kl_tools.kl(p, p), 0.)
 
+    def test_entropy(self):
+        nchannels = 4
+        # uniform distribution, entropy = number of channels
+        alpha = np.zeros(2**nchannels) + 10000
+        hest = -kl_tools.mean_H_estimate(alpha)
+        assert(abs(hest-nchannels) < 1e-4)
+
+        # sample from distribution, reconstruct entropy
+        nchannels = 3
+        distr = np.array([0.1, 0.3, 0.05, 0.05, 0.2, 0.1, 0.1, 0.1])
+        real_entropy = -sum(distr*np.log2(distr))
+        
+        hest1 = - kl_tools.mean_H_estimate(distr*100000)
+        assert_almost_equal(real_entropy, hest1, 2)
+
+        # sample from distribution
+        states = np.random.multinomial(1, distr, size=100000).argmax(1)
+        distr = kl_tools.states2dict(states[:,None], nchannels)
+        
+        hest1 = - kl_tools.mean_H_estimate(distr[1][0])
+        assert_almost_equal(real_entropy, hest1, 2)
+
+        hest2 = - kl_tools.h_estimation(distr, states.shape[0]);
+        assert_almost_equal(real_entropy, hest2, 2)
+
+
 if __name__ == '__main__':
     unittest.main()
 

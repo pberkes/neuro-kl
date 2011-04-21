@@ -89,6 +89,17 @@ def kl_estimation(p_dict, q_dict, npoints, alpha=1., Ns=None):
     return kl_extr[0], h_extr[0]
 
 def h_estimation(p_dict, npoints, alpha=1., Ns=None):
+    """Compute an estimation of the negative entropy of a distribution.
+
+    The estimation is done using a Bayesian estimator, followed by an
+    extrapolation step to reduce biases in the estimation.
+
+    Input arguments:
+    p_dict -- a dictionary containing the distribution of states, as created
+              by the function `states2dict`
+    npoints -- total number of points used to estimate the distribution
+    alpha -- paramters of the Dirichlet prior (usually set to 1)
+    """
     ns = array([4,2,1], dtype='int64')
     h_estimate = zeros((len(ns),))
     for j, d in enumerate(ns):
