@@ -6,7 +6,7 @@ setup(name='neuro_kl',
       author='Pietro Berkes',
       author_email='pietro.berkes@googlemail.com ',
       url='https://github.com/pberkes/neuro_kl',
-      license='LICENSE.txt',
-      long_description=open('README.rst').read(),
+      license='../LICENSE.txt',
+      long_description=open('../README.rst').read(),
       packages=['neuro_kl']
       )
