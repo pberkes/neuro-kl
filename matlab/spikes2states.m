@@ -11,6 +11,9 @@ function result=spikes2states(spikes)
 %   disp(spikes2states(spikes)');
 %     6     5     6     1     6     5
 
+% Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
+% License: GPL v3
+
 
     number_channels = size(spikes, 2);
 

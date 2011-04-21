@@ -8,6 +8,9 @@ function result = mean_KL_estimate(alpha, beta)
 %   but the parameters of the Dirichlet posterior of the two distributions.
 %   Use KL_ESTIMATION to estimate KL directly from data sequences.
 
+% Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
+% License: GPL v3
+
     alpha0=sum(alpha);
     beta0=sum(beta);
 

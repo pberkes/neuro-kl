@@ -8,6 +8,9 @@ function result=mean_H_estimate(alpha)
 %   but the parameters of the Dirichlet posterior of the distribution.
 %   Use H_ESTIMATION to estimate H directly from data sequences.
 
+% Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
+% License: GPL v3
+
     alpha0=sum(alpha);
 
     result = ( sum(alpha.*psi(alpha+1))/alpha0 - psi(alpha0+1) )./log(2);

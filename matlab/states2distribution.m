@@ -11,6 +11,9 @@ function distribution = states2distribution(states, number_channels)
 %   disp(states2distribution(spikes2states(spikes), 4)')
 %      1     0     0     0     2     3     0     0     ...
 
+% Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
+% License: GPL v3
+
     nbins = 2^number_channels;
     distribution = histc(states, (1:(nbins+1))-0.5);
     % the last bin returned by histc has a special meaning

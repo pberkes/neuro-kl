@@ -12,6 +12,10 @@ function [Hest] = h_estimation(P, alpha, do_shuffle, number_channels)
 %   DO_SHUFFLE: if set to non-zero value, the data is shuffled before
 %   NUMBER_CHANNELS: number of channels in the data
 
+% Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
+% License: GPL v3
+
+
     parts=[4,2,1];
 
     part_lengths=length(P)./parts;
