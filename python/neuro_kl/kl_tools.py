@@ -3,7 +3,7 @@
 # License: GPL v3
 
 import scipy
-from scipy import log2, array, zeros
+from scipy import log, log2, array, zeros
 from scipy.special import digamma
 
 def kl(p, q):
@@ -187,11 +187,37 @@ def states2dict(states, nchannels, npoints=None, fractions=[1,2,4], shuffle=True
     _check_dict_consistency(distr, npoints)
     return distr
 
-def spikes2indep_dict(spikes, nchannels, npoints, fractions=[1,2,4]):
-    """Return distribution over states, assuming that channels are independent.
+def spikes2indep_dict(spikes, npoints=None, fractions=[1,2,4]):
+    """Return dictionary with distribution over states assuming independence.
+
+    This function works like `states2dict`, but takes as input an array of
+    spikes, and return a dictionary of states by removing all dependencies
+    between channels.
+
     The distributions are *not* normalized, as required by other routines
     (e.g., KL estimation routines).
+    
+    Input arguments:
+    spikes -- spikes trains: 2D binary array, each column a different unit,
+              each row a time point
+    nchannels -- total number of channels (used to determine the maximum number
+                 of states)
+    npoints -- number of data points Default: None, meaning the full length of states
+    fractions -- fractions of the data. For example, fractions=[1,2,4] will create
+                 3 entries in the dictionary, based on the full data (N datapoints),
+                 half the data (2 x N/2 points), and one quarter of the data
+                 (4 x N/4 points). Default: [1,2,4]
+    shuffle -- If True, data points are shuffled before computing the dictionaries
+               to avoid trends in the data
+
+    Output:
+    Dictionary distr[fraction][distr_nr]. Keys are fractions (as given by input
+    argument), values are lists of distributions.
     """
+    if npoints is None:
+        npoints = spikes.shape[0]
+    nchannels = spikes.shape[1]
+
     # p1[i] = p(channel_i = 1)
     p1 = spikes.sum(0).astype('d')/spikes.shape[0]
     # distribution over states given independence

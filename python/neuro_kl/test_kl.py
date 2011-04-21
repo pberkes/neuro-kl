@@ -5,7 +5,7 @@
 import unittest
 import kl_tools
 import numpy as np
-from numpy.testing import assert_array_equal, assert_array_almost_equal
+from numpy.testing import assert_array_equal, assert_array_almost_equal, assert_almost_equal
 
 class KLTest(unittest.TestCase):
     def test_spikes2states(self):
@@ -63,6 +63,12 @@ class KLTest(unittest.TestCase):
             desired[i] = 10.
             self.assertFalse(np.all(distr[4][i] == desired))
             self.assertEqual(distr[4][i].sum(), 10.)
+
+    def test_spikes2indep_dict(self):
+        spikes = np.array([[0, 0], [1, 0], [1, 0], [0, 1], [1, 0]])
+        desired = np.array([8.,2.,12.,3.])/25.
+        distr = kl_tools.spikes2indep_dict(spikes)
+        assert_array_almost_equal(desired, distr[1][0]/5., 6)
         
     def test_transition_matrix(self):
         patterns = np.array([[0, 0],
