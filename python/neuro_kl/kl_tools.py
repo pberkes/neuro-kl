@@ -3,7 +3,7 @@
 # License: GPL v3
 
 import scipy
-from scipy import log2
+from scipy import log2, array, zeros
 from scipy.special import digamma
 
 def kl(p, q):
@@ -39,7 +39,7 @@ def mean_H_estimate(alpha):
     posterior over a distribution, `p`. The function returns
     the mean estimation < H(p) >_P, in bits.
 
-    Parameters:
+    Input arguments:
     alpha -- parameters of the Dirichlet posterior over p
     """
     alpha0 = alpha.sum()
@@ -53,7 +53,7 @@ def mean_KL_estimate(alpha, beta):
     posterior over two distributions, `p` and `q`. The function returns
     the mean estimation < < KL(p||q) >_P(alpha) >_Q(beta), in bits
 
-    Parameters:
+    Input arguments:
     alpha -- parameters of the Dirichlet posterior over p
     beta -- parameters of the Dirichlet posterior over q
     """
@@ -108,6 +108,10 @@ def h_estimation(p_dict, npoints, alpha=1., Ns=None):
 
 def spikes2states(spikes):
     """Convert a sequence of binarized spikes to a sequence of state numbers.
+
+    Input arguments:
+    spikes -- spikes trains: 2D binary array, each column a different unit,
+              each row a time point
     """
 
     # check that the incoming array is binary
@@ -116,7 +120,7 @@ def spikes2states(spikes):
 
     nchannels = spikes.shape[1]
     # convert binary sequence to decimal numbers
-    pow2 = scipy.array([2**i for i in range(nchannels-1,-1,-1)])
+    pow2 = array([2**i for i in range(nchannels-1,-1,-1)])
     return (spikes*pow2).sum(axis=1)
 
 def states2distr(states, nchannels, normed=True):
@@ -143,21 +147,42 @@ def states2distr(states, nchannels, normed=True):
     distr, ledges = scipy.histogram(states, bins=bins, normed=normed)
     return distr.astype('d')
 
-def states2dict(all_y, nchannels, npoints, fractions=[1,2,4], shuffle=False):
-    """Return dictionary with distribution over states for N, N/2, N/4.
+def states2dict(states, nchannels, npoints=None, fractions=[1,2,4], shuffle=True):
+    """Return dictionary with distribution over states for fractions of data.
     The distributions are *not* normalized, as required by other routines
     (e.g., KL estimation routines).
+
+    This function is intented to be used with the KL and entropy estimation
+    functions, kl_estimation and h_estimation.
+
+    Input arguments:
+    states -- array of states
+    nchannels -- total number of channels (used to determine the maximum number
+                 of states)
+    npoints -- number of data points Default: None, meaning the full length of states
+    fractions -- fractions of the data. For example, fractions=[1,2,4] will create
+                 3 entries in the dictionary, based on the full data (N datapoints),
+                 half the data (2 x N/2 points), and one quarter of the data
+                 (4 x N/4 points). Default: [1,2,4]
+    shuffle -- If True, data points are shuffled before computing the dictionaries
+               to avoid trends in the data
+
+    Output:
+    Dictionary distr[fraction][distr_nr]. Keys are fractions (as given by input
+    argument), values are lists of distributions.
     """
+    if npoints is None:
+        npoints = states.shape[0]
     if shuffle:
-        all_y = all_y.copy()
-        p = scipy.random.permutation(all_y.shape[0])
-        all_y = scipy.take(all_y, p)
+        states = states.copy()
+        p = scipy.random.permutation(states.shape[0])
+        states = scipy.take(states, p)
     distr = {}
     for d in fractions:
         distr[d] = [None]*d
         block_len = npoints//d
         for i in range(d):
-            part_y = all_y[i*block_len:(i+1)*block_len]
+            part_y = states[i*block_len:(i+1)*block_len]
             distr[d][i] = states2distr(part_y, nchannels, normed=False)
     _check_dict_consistency(distr, npoints)
     return distr

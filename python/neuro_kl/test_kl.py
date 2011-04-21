@@ -39,13 +39,38 @@ class KLTest(unittest.TestCase):
         self.assertEqual(len(distr), 2**nchannels)
         assert_array_equal(desired/5., distr)
 
+    def test_states2dict(self):
+        states = np.array([0]*10 + [1]*10 + [2]*10 + [3]*10)
+        
+        distr = kl_tools.states2dict(states, 2, states.shape[0], shuffle=False)
+        assert_array_equal(distr[1][0], [10.,10.,10.,10.])
+        assert_array_equal(distr[2][0], [10.,10.,0.,0.])
+        assert_array_equal(distr[2][1], [0.,0.,10.,10.])
+        for i in range(4):
+            desired = np.zeros((4,))
+            desired[i] = 10.
+            assert_array_equal(distr[4][i], desired)
+            
+        # check that shuffling shuffles
+        distr = kl_tools.states2dict(states, 2, states.shape[0], shuffle=True)
+        assert_array_equal(distr[1][0], [10.,10.,10.,10.])
+        self.assertFalse(np.all(distr[2][0] == [10.,10.,0.,0.]))
+        self.assertEqual(distr[2][0].sum(), 20.)
+        self.assertFalse(np.all(distr[2][1] == [0.,0.,10.,10.]))
+        self.assertEqual(distr[2][1].sum(), 20.)
+        for i in range(4):
+            desired = np.zeros((4,))
+            desired[i] = 10.
+            self.assertFalse(np.all(distr[4][i] == desired))
+            self.assertEqual(distr[4][i].sum(), 10.)
+        
     def test_transition_matrix(self):
         patterns = np.array([[0, 0],
-                                [0, 1],
-                                [0, 1],
-                                [1, 1],
-                                [0, 0],
-                                [0, 1]])
+                             [0, 1],
+                             [0, 1],
+                             [1, 1],
+                             [0, 0],
+                             [0, 1]])
         states = kl_tools.spikes2states(patterns)
 
         desired = np.zeros((4, 4))
@@ -67,9 +92,9 @@ class KLTest(unittest.TestCase):
         tr = kl_tools.transition_matrix(states, 4, dt=2)
         assert_array_equal(desired, tr)
 
-    def kl_basic(self):
+    def test_kl_basic(self):
         p = np.array([0.7, 0.1, 0.2])
-        self.AssertEqual(kl.kl(p, p), 0.)
+        self.assertEqual(kl_tools.kl(p, p), 0.)
 
 if __name__ == '__main__':
     unittest.main()
