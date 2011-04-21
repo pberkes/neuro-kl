@@ -32,7 +32,6 @@ function [Hest] = h_estimation(P, alpha, do_shuffle, number_channels)
     if do_shuffle==1
         elSeq=randperm(length(P));
         P=P(elSeq);
-        Q=Q(elSeq);
     end
 
     for part=1:length(parts)
