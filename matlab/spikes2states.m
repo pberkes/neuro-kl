@@ -9,7 +9,7 @@ function result=spikes2states(spikes)
 %   For example:
 %   spikes = [[1,0,1,0];[0,0,1,0];[1,0,1,0];[0,0,0,0];[1,0,1,0];[0,0,1,0]];
 %   disp(spikes2states(spikes)');
-%     6     5     6     1     6     5
+%     11     3    11     1    11     3
 
 % Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
 % License: GPL v3
@@ -17,6 +17,6 @@ function result=spikes2states(spikes)
 
     number_channels = size(spikes, 2);
 
-    conv = 2.^(0:(number_channels-1));
+    conv = 2.^((number_channels-1):-1:0);
     result = spikes*conv' + 1;
     

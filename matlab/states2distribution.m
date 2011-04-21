@@ -9,7 +9,7 @@ function distribution = states2distribution(states, number_channels)
 %   example:
 %   spikes = [[1,0,1,0];[0,0,1,0];[1,0,1,0];[0,0,0,0];[1,0,1,0];[0,0,1,0]];
 %   disp(states2distribution(spikes2states(spikes), 4)')
-%      1     0     0     0     2     3     0     0     ...
+%      1   0   2   0   0   0   0   0   0   0   3   0   ...
 
 % Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
 % License: GPL v3
