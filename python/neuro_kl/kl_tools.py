@@ -56,6 +56,9 @@ def mean_KL_estimate(alpha, beta):
     Input arguments:
     alpha -- parameters of the Dirichlet posterior over p
     beta -- parameters of the Dirichlet posterior over q
+
+    Output:
+    Entropy estimate
     """
     
     alpha0 = alpha.sum()
@@ -66,6 +69,24 @@ def mean_KL_estimate(alpha, beta):
     return res
 
 def kl_estimation(p_dict, q_dict, npoints, alpha=1., Ns=None):
+    """Compute an estimation of the KL divergence between two distributions.
+
+    The estimation is done using a Bayesian estimator, followed by an
+    extrapolation step to reduce biases in the estimation.
+
+    Input arguments:
+    p_dict -- a dictionary containing the distribution of states for the first
+              distribution, as created by the function `states2dict`
+    q_dict -- a dictionary containing the distribution of states for the second
+              distribution, as created by the function `states2dict`
+    npoints -- total number of points used to estimate the distribution
+    alpha -- paramters of the Dirichlet prior (usually set to 1)
+
+    Output:
+    kl_est -- estimate of the KL divergence of p and q
+    h_est -- estimate of the entropy of p
+    """
+
     ns = array([4,2,1], dtype='int64')
     h_estimate = zeros((len(ns),))
     kl_estimate = zeros((len(ns),))
@@ -134,7 +155,7 @@ def spikes2states(spikes):
     pow2 = array([2**i for i in range(nchannels-1,-1,-1)])
     return (spikes*pow2).sum(axis=1)
 
-def states2distr(states, nchannels, normed=True):
+def states2distr(states, nchannels, normed=False):
     """Return distribution over states.
 
     States are the decimal number of neural activity patterns, where the patterns

@@ -98,10 +98,6 @@ class KLTest(unittest.TestCase):
         tr = kl_tools.transition_matrix(states, 4, dt=2)
         assert_array_equal(desired, tr)
 
-    def test_kl_basic(self):
-        p = np.array([0.7, 0.1, 0.2])
-        self.assertEqual(kl_tools.kl(p, p), 0.)
-
     def test_entropy(self):
         nchannels = 4
         # uniform distribution, entropy = number of channels
@@ -113,6 +109,9 @@ class KLTest(unittest.TestCase):
         nchannels = 3
         distr = np.array([0.1, 0.3, 0.05, 0.05, 0.2, 0.1, 0.1, 0.1])
         real_entropy = -sum(distr*np.log2(distr))
+        
+        h = - kl_tools.entropy(distr)
+        assert_almost_equal(real_entropy, h, 2)
         
         hest1 = - kl_tools.mean_H_estimate(distr*100000)
         assert_almost_equal(real_entropy, hest1, 2)
@@ -126,6 +125,44 @@ class KLTest(unittest.TestCase):
 
         hest2 = - kl_tools.h_estimation(distr, states.shape[0]);
         assert_almost_equal(real_entropy, hest2, 2)
+
+    def test_kl_zero(self):
+        nchannels = 3
+        distr = np.array([0.1, 0.3, 0.05, 0.05, 0.2, 0.1, 0.1, 0.1])
+        # same states, KL divergence should converge to zero
+        states = np.random.multinomial(1, distr, size=100000).argmax(1)
+        states2 = np.random.permutation(states)
+
+        distr = kl_tools.states2distr(states, nchannels)
+        distr2 = kl_tools.states2distr(states2, nchannels)
+        kl1 = kl_tools.mean_KL_estimate(distr, distr2)
+        assert_almost_equal(kl1, 0., 3)
+
+        distr = kl_tools.states2dict(states[:,None], nchannels)
+        distr2 = kl_tools.states2dict(states2[:,None], nchannels)
+        kl2, _ = kl_tools.kl_estimation(distr, distr2, 100000)
+        assert_almost_equal(kl2, 0., 3)
+
+    def test_kl(self):
+        nchannels = 3
+        distr = np.array([0.1, 0.3, 0.05, 0.05, 0.2, 0.1, 0.1, 0.1])
+        distr2 = np.array([0.4, 0.2, 0.01, 0.09, 0.05, 0.05, 0.03, 0.17])
+        real_kl = (distr * np.log2(distr/distr2)).sum()
+
+        kl1 = kl_tools.kl(distr, distr2)
+        assert_almost_equal(kl1, real_kl, 6)
+
+        kl2 = kl_tools.mean_KL_estimate(distr*100000, distr2*100000)
+        assert_almost_equal(kl2, real_kl, 3)
+
+        # sample states
+        states = np.random.multinomial(1, distr, size=100000).argmax(1)
+        states2 = np.random.multinomial(1, distr2, size=100000).argmax(1)
+
+        distr = kl_tools.states2dict(states[:,None], nchannels)
+        distr2 = kl_tools.states2dict(states2[:,None], nchannels)
+        kl3, _ = kl_tools.kl_estimation(distr, distr2, 100000)
+        assert_almost_equal(kl3, real_kl, 2)
 
 
 if __name__ == '__main__':
