@@ -1,7 +1,7 @@
 function result=mean_H_estimate(alpha)
 % MEAN_H_ESTIMATE computes a mean estimate of the negative entropy
 %
-%   H = MEAN_H_ESTIMATE(ALPHA, BETA) computes the mean of a Bayesian
+%   H = MEAN_H_ESTIMATE(ALPHA) computes the mean of a Bayesian
 %   estimator of the negative entropy of a distribution
 %
 %   IMPORTANT: alpha does not contain the values of the distribution,
