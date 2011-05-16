@@ -1,4 +1,4 @@
-function [KLest, Hest]=kl_estimation(P, Q, alpha, beta, do_shuffle, number_channels)
+function [KLest, Hest, KL_means, H_means, N]=kl_estimation(P, Q, alpha, beta, do_shuffle, number_channels)
 % KL_ESTIMATION estimate KL divergence of discrete states sequences.
 %
 %   [KLEST, HEST] = KL_ESTIMATION(P, Q, ALPHA, BETA, DO_SHUFFLE,
@@ -18,7 +18,7 @@ function [KLest, Hest]=kl_estimation(P, Q, alpha, beta, do_shuffle, number_chann
 
     parts=[4,2,1];
 
-    part_lengths=length(P)./parts;
+    N=length(P)./parts;
 
     KL_results=cell(length(parts),1);
     KL_means=zeros(length(parts),1);
@@ -27,7 +27,7 @@ function [KLest, Hest]=kl_estimation(P, Q, alpha, beta, do_shuffle, number_chann
     segment=cell(length(parts),1);
 
     for part=1:length(parts)
-        segment{part}=floor([0 (1:parts(part)).*part_lengths(part)]);
+        segment{part}=floor([0 (1:parts(part)).*N(part)]);
     end
 
     % permute datapoints if requested
@@ -56,7 +56,7 @@ function [KLest, Hest]=kl_estimation(P, Q, alpha, beta, do_shuffle, number_chann
         H_means(part,1)=mean(H_results{part});
     end
 
-    p = polyfit(part_lengths.^-1,KL_means',2);
+    p = polyfit(N.^-1,KL_means',2);
     KLest=p(3);
-    p = polyfit(part_lengths.^-1,H_means',2);
+    p = polyfit(N.^-1,H_means',2);
     Hest=p(3);
