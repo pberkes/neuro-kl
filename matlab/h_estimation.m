@@ -18,14 +18,14 @@ function [Hest] = h_estimation(P, alpha, do_shuffle, number_channels)
 
     parts=[4,2,1];
 
-    part_lengths=length(P)./parts;
+    N=length(P)./parts;
 
     H_results=cell(length(parts),1);
     H_means=zeros(length(parts),1);
     segment=cell(length(parts),1);
 
     for part=1:length(parts)
-        segment{part}=floor([0 (1:parts(part)).*part_lengths(part)]);
+        segment{part}=floor([0 (1:parts(part)).*N(part)]);
     end
 
     % permute datapoints if requested
@@ -47,7 +47,6 @@ function [Hest] = h_estimation(P, alpha, do_shuffle, number_channels)
         H_means(part,1)=mean(H_results{part});
     end
 
-    [p,S,mu] = polyfit(part_lengths.^-1,H_means',2);
-    Hest=p(3);
-
+    [p,S,mu] = polyfit(N,(N.*N).*H_means',2);
+    Hest=p(1)/(mu(2).^2);
 end
