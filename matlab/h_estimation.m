@@ -47,7 +47,7 @@ function [Hest] = h_estimation(P, alpha, do_shuffle, number_channels)
         H_means(part,1)=mean(H_results{part});
     end
 
-    p = polyfit(part_lengths.^-1,H_means',2);
+    [p,S,mu] = polyfit(part_lengths.^-1,H_means',2);
     Hest=p(3);
 
 end

@@ -56,7 +56,7 @@ function [KLest, Hest, KL_means, H_means, N]=kl_estimation(P, Q, alpha, beta, do
         H_means(part,1)=mean(H_results{part});
     end
 
-    p = polyfit(N.^-1,KL_means',2);
+    [p,S,mu] = polyfit(N.^-1,KL_means',2);
     KLest=p(3);
-    p = polyfit(N.^-1,H_means',2);
+    [p,S,mu] = polyfit(N.^-1,H_means',2);
     Hest=p(3);
