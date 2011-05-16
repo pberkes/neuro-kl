@@ -12,6 +12,13 @@ function [KLest, Hest, KL_means, H_means, N]=kl_estimation(P, Q, alpha, beta, do
 %   ALPHA, BETA: paramters of the Dirichlet prior (usually set to 1)
 %   DO_SHUFFLE: if set to non-zero value, the data is shuffled before
 %   NUMBER_CHANNELS: number of channels in the data
+%
+%   Output:
+%   KLEST: final estimate of KL divergence between P and Q
+%   HEST: final estimate of the entropy of P
+%   KL_means: mean KL estimates for N/4, N/2, and N; used for extrapolation
+%   H_means: mean entropy estimates for N/4, N/2, and N; for extrapolation
+%   N: vector with number of points used for extrapolation
 
 % Copyright (c) 2011 Pietro Berkes and Dmitriy Lisitsyn
 % License: GPL v3
