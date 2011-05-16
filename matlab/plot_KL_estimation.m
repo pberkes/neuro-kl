@@ -4,6 +4,10 @@ function plot_KL_estimation(KL_means, N)
 %
 %   PLOT_KL_ESTIMATION(KL_means, N) plots the intermediate results of the
 %    KL estimation process for visual inspection and diagnosis.
+%    In the plot, the blue circles represent the mean KL estimation at
+%    N/4, N/2, and N. The dotted line respresents the polynomial fitted
+%    to the data. The red dashed line is the final value of the KL
+%    estimation.
 %
 %   Parameters:
 %   KL_means: mean KL estimates for N/4, N/2, and N;
